@@ -1,7 +1,7 @@
 import axios from "axios";
 import jwt_decode from 'jwt-decode'; // needed to decode the credential and get the image of the user
 
-export const createOrGetUser = async (response: any) => {
+export const createOrGetUser = async (response: any, addUser: any) => {
 
   const decoded: {name: string, picture: string, sub:string, email: string} = jwt_decode(response.credential);
   console.log("decoded ",decoded);
@@ -15,5 +15,8 @@ export const createOrGetUser = async (response: any) => {
     userName: name, 
     image: picture,
   }
+  // save the user in state locally for current session
+  addUser(user);
+
   await axios.post(`http://localhost:3000/api/auth`, user);
 };
