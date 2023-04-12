@@ -7,6 +7,7 @@ import { json } from 'stream/consumers';
 export default async function handler(req: NextApiRequest,res: NextApiResponse) {
   if (req.method === 'GET') {
     const query = allPostsQuery();
+    // here's the API call from backend
     const data = await client.fetch(query); // passing the query for fetching on the client
     res.status(200).json(data);
   }
