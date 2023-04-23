@@ -1,8 +1,3 @@
-// detail page for every particular video
-// works like /home/folder/subfolder/file
-// here /home/detail/[id].tsx
-// no subfolder
-
 import React, {useState, useEffect, useRef} from 'react'
 import {useRouter} from 'next/router';
 import Image from 'next/image';
@@ -24,19 +19,21 @@ interface IProps {
 
 const Detail = ( {postDetails}: IProps) => {
   const [post, setPost] = useState(postDetails);
-  const [playing, setPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const {userProfile}: any  = useAuthStore();
+  const [comment, setComment] = useState("");
+  const [isPostingComment, setIsPostingComment] = useState(false);
 
   const onVideoClick = () => {
-    if (playing) {
+    if (isPlaying) {
       videoRef?.current?.pause();
-      setPlaying(false);
+      setIsPlaying(false);
     } else {
       videoRef?.current?.play();
-      setPlaying(true);
+      setIsPlaying(true);
     }
   }
 
@@ -56,6 +53,21 @@ const Detail = ( {postDetails}: IProps) => {
 
       setPost({...post, likes: data.likes})
 
+    }
+  }
+
+  const addComment = async (e) => {
+    e.preventDefault();
+    if (userProfile && comment) {
+      setIsPostingComment(true);
+      const {data} = await axios.put(`${BASE_URL}/api/post/${post._id}`, {
+        userId: userProfile._id,
+        comment
+      });
+
+      setPost({...post, comments: data.comments});
+      setComment('');
+      setIsPostingComment(false);
     }
   }
 
@@ -84,7 +96,7 @@ const Detail = ( {postDetails}: IProps) => {
             </video>
           </div>
           <div className='absolute top-[45%] left-[45%] cursor-pointer'>
-            {!playing && (
+            {!isPlaying && (
               <button
                 onClick={onVideoClick}
               >
@@ -155,7 +167,12 @@ const Detail = ( {postDetails}: IProps) => {
             />
            )}
         </div>
-           <Comments />
+           <Comments 
+            comment = {comment}
+            setComment = {setComment}
+            addComment = {addComment}
+            isPostingComment = {isPostingComment}
+           />
         </div>
       </div>
       
