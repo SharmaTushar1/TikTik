@@ -38,6 +38,7 @@ const Detail = ( {postDetails}: IProps) => {
   }
 
   useEffect(() => {
+    console.log("post => ", post);
     if (post && videoRef?.current) {
       videoRef.current.muted = isVideoMuted;
     }
@@ -171,6 +172,7 @@ const Detail = ( {postDetails}: IProps) => {
             comment = {comment}
             setComment = {setComment}
             addComment = {addComment}
+            comments = {post.comments}
             isPostingComment = {isPostingComment}
            />
         </div>
